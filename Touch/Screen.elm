@@ -55,6 +55,16 @@ toCardinal (Swipe _ angles) =
                | otherwise                        -> Left
   in map f angles
 
+fromArrows : {x: Int, y: Int} -> Cardinal
+fromArrows {x,y} = if | x == 1  && y == 0  -> Right
+                      | x == 1  && y == 1  -> UpRight
+                      | x == 0  && y == 1  -> Up
+                      | x == -1 && y == 1  -> UpLeft
+                      | x == 1  && y == -1 -> DownRight
+                      | x == 0  && y == -1 -> Down
+                      | x == -1 && y == -1 -> DownLeft
+                      | otherwise          -> Left
+
 -- | Determines if a given Touch started and ended on the same pixel.
 isTap : Touch -> Bool
 isTap {x,y,x0,y0} = x0 == x && y0 == y
