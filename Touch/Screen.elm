@@ -6,6 +6,8 @@ import Touch (..)
 
 data Cardinal = Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
 
+-- | angles : [Float]
+-- Holds an angle for each swipe made in one action.
 data Swipe = Swipe SwipeType [Float]
 
 data SwipeType = OneFinger | TwoFinger | ThreeFinger
@@ -21,14 +23,16 @@ relative : (Int,Int) -> Signal Cardinal
 cardinal : Signal Cardinal
 cardinal = (head . toCardinal) <~ swipe
 
+-- | Yields a Swipe. Swipes can be with one to three fingers.
 swipe : Signal Swipe
-swipe = let dflt = [{x=0, y=0, id=0, x0=0, y0=0, t0=0}]
-            a t  = angle (t.x0,t.y0) (t.x,t.y)
-            f sw = case length sw of
+swipe = let dflt  = [{x=0, y=0, id=0, x0=0, y0=0, t0=0}]
+            ok ts = not (isEmpty ts) && not (isTap <| head ts)
+            a t   = angle (t.x0,t.y0) (t.x,t.y)
+            f sw  = case length sw of
                      1 -> Swipe OneFinger   <| map a sw
                      2 -> Swipe TwoFinger   <| map a sw
-                     3 -> Swipe ThreeFinger <| map a sw
-        in f <~ keepIf (not . isEmpty) dflt touches
+                     _ -> Swipe ThreeFinger <| take 3 <| map a sw
+        in f <~ keepIf ok dflt touches
 
 -- | Calculates the angle between two points on the screen.
 -- Based on the standard unit circle. Angles range from
@@ -50,3 +54,7 @@ toCardinal (Swipe _ angles) =
                | bw a (-7 * pi / 8) (-5 * pi / 8) -> DownLeft
                | otherwise                        -> Left
   in map f angles
+
+-- | Determines if a given Touch started and ended on the same pixel.
+isTap : Touch -> Bool
+isTap {x,y,x0,y0} = x0 == x && y0 == y
