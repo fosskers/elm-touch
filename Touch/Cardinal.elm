@@ -1,6 +1,7 @@
 module Touch.Cardinal where
 
 import Touch.Types (..)
+import Touch.Util as Util
 
 ---
 
@@ -8,7 +9,7 @@ data Direction = Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpL
 
 -- | Converts a Swipe's angles to Cardinal directions.
 fromSwipe : Swipe -> [Direction]
-fromSwipe (Swipe _ angles) = map fromAngle angles
+fromSwipe (Swipe _ vectors) = map (fromAngle . Util.vectorAngle) vectors
 
 fromAngle : Float -> Direction
 fromAngle a = let bw a b1 b2 = a >= b1 && b2 > a
