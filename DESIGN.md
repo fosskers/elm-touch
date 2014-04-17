@@ -1,31 +1,37 @@
 elm-touch Design
 ----------------
 
-## Use Cases
+## (Gesture Type) Use Cases
 
-User taps the screen
-- To press a button, hit a target, click a link.
-- Touch.taps
+(Tap) User taps the screen
+- Purpose: To press a button, hit a target, click a link.
+- One, two, three finger (a la laptop trackpad right-clicking, etc.)
+- Multi-finger Taps trigger on the difference in `Touch` timing
+  by some time delta.
 - Should not fire on a Swipe or Slide.
-```elm
--- Position of latest Mouse click.
-clickPos : Signal {x:Int, y:Int}
-clickPos = let f (x',y') = {x=x', y=y'}
-	   in f <~ keepWhen Mouse.isDown (0,0) Mouse.position
+```haskell
+data Tap = Tap Fingers [{x:Int, y:Int}]
 
--- Note that `clickPos` == `Touch.taps`
+tap : Signal Tap
+tap = (\t -> Tap OneFinger [t]) <~ taps
+
+multiTap : Signal Tap
+multiTap = ...  -- Depends on tap timing.
 ```
 
-User taps relative to a fixed position
-- Useful to implement a D-Pad in an app.
+(Tap) User taps relative to a fixed position
+- Purpose: To operate an in-app D-pad.
+- One finger.
+- `Touch.Actions.relative`
 
-User makes a single Swipe action
-- To cut fruit, change slides, shift in 2048.
+(Swipe) User makes a single ray-like Swipe action
+- **Purpose:** To cut fruit, change slides, shift in 2048.
 - One, two or three fingers
-- Starting and ending positions.
+- Knows starting and ending positions.
 - Doesn't activate until released.
+- `Touch.Actions.swipe` or `Touch.Actions.cardinal`
 
-User makes a continuous swipe action (Slide)
-- Erasing/Writing in a drawing app.
-- Directing a moving character in a platformer.
-- Touch.touches
+(Slide) User makes a continuous swipe action
+- Purpose: To erase/write in a drawing app, 
+  	   direct a moving character in a platform game.
+- `Touch.touches`
