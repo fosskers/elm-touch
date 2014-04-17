@@ -4,11 +4,13 @@ import Touch.Types (..)
 
 ---
 
+data Direction = Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
+
 -- | Converts a Swipe's angles to Cardinal directions.
-fromSwipe : Swipe -> [Cardinal]
+fromSwipe : Swipe -> [Direction]
 fromSwipe (Swipe _ angles) = map fromAngle angles
 
-fromAngle : Float -> Cardinal
+fromAngle : Float -> Direction
 fromAngle a = let bw a b1 b2 = a >= b1 && b2 > a
               in if | bw a (-pi/8) (pi/8)              -> right
                     | bw a (pi/8) (3 * pi / 8)         -> upRight
@@ -19,7 +21,7 @@ fromAngle a = let bw a b1 b2 = a >= b1 && b2 > a
                     | bw a (-7 * pi / 8) (-5 * pi / 8) -> downLeft
                     | otherwise                        -> left
 
-fromArrows : {x: Int, y: Int} -> Cardinal
+fromArrows : {x: Int, y: Int} -> Direction
 fromArrows {x,y} = if | x == 1  && y == 0  -> right
                       | x == 1  && y == 1  -> upRight
                       | x == 0  && y == 1  -> up
@@ -29,26 +31,26 @@ fromArrows {x,y} = if | x == 1  && y == 0  -> right
                       | x == -1 && y == -1 -> downLeft
                       | otherwise          -> left
 
-up : Cardinal
+up : Direction
 up = Up
 
-upRight : Cardinal
+upRight : Direction
 upRight = UpRight
 
-right : Cardinal
+right : Direction
 right = Right
 
-downRight : Cardinal
+downRight : Direction
 downRight = DownRight
 
-down : Cardinal
+down : Direction
 down = Down
 
-downLeft : Cardinal
+downLeft : Direction
 downLeft = DownLeft
 
-left : Cardinal
+left : Direction
 left = Left
 
-upLeft : Cardinal
+upLeft : Direction
 upLeft = UpLeft
