@@ -4,6 +4,6 @@ data Cardinal = Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLe
 
 -- | angles : [Float]
 -- Holds an angle for each swipe made in one action.
-data Swipe = Swipe SwipeType [Float]
+data Swipe = Swipe Fingers [Float]
 
-data SwipeType = OneFinger | TwoFinger | ThreeFinger
+data Fingers = OneFinger | TwoFinger | ThreeFinger
