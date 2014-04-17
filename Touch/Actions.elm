@@ -27,6 +27,13 @@ swipe = let dflt  = [{x=0, y=0, id=0, x0=0, y0=0, t0=0}]
                      _ -> S.threeFinger <| take 3 <| map a sw
         in f <~ keepIf ok dflt T.touches
 
+-- | A standard, one finger tap action.
+tap : Signal Tap
+tap = (\{x,y} -> Tap OneFinger [(x,y)]) <~ T.taps
+
+-- multiTap : Signal Tap
+-- multiTap = ... -- Depends on tap timing. Based on `Touch.touches`
+
 -- | Calculates the angle between two points on the screen.
 -- Based on the standard unit circle. Angles range from
 -- pi to -pi.
