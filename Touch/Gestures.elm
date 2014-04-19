@@ -53,3 +53,15 @@ tap = (\{x,y} -> Tap.oneFinger [(x,y)]) <~ Touch.taps
 -}
 relative : (Int,Int) -> Signal Cardinal.Direction
 relative fixed = (\{x,y} -> Cardinal.fromAngle <| Util.angle fixed (x,y)) <~ Touch.taps
+
+{-| Yields a Cardinal Direction relative to a given fixed location,
+but only within a certain distance. Can be used to implement
+a D-Pad in an app with a certain "area of effectiveness". That is,
+clicks that are too far away from the D-Pad (say, hitting other buttons)
+won't activate the D-Pad.
+-}
+relativeWithin : Int -> (Int,Int) -> Signal Cardinal.Direction
+relativeWithin dis fixed =
+    let ok {x,y}    = Util.distance fixed (x,y) <= dis
+        angle {x,y} = Cardinal.fromAngle <| Util.angle fixed (x,y)
+    in angle <~ keepIf ok {x=0,y=0} Touch.taps
