@@ -5,7 +5,7 @@ import Touch.Util as Util
 
 ---
 
-data Direction = Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
+data Direction = None | Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
 
 -- | Converts a Swipe's angles to Cardinal directions.
 fromSwipe : Swipe -> [Direction]
@@ -30,7 +30,11 @@ fromArrows {x,y} = if | x == 1  && y == 0  -> right
                       | x == 1  && y == -1 -> downRight
                       | x == 0  && y == -1 -> down
                       | x == -1 && y == -1 -> downLeft
-                      | otherwise          -> left
+                      | x == -1 && y == 0  -> left
+                      | otherwise          -> none
+
+none : Direction
+none = None
 
 up : Direction
 up = Up
