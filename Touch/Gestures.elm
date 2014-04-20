@@ -2,11 +2,11 @@ module Touch.Gestures where
 
 {-| A library for touch gestures one can make on a mobile device.
 
-# Swipe Gestures
+# Swipes
 @docs slide, swipe, ray
 
 # Taps
-@docs tap, relative
+@docs tap, relative, relativeWithin
 -}
 
 import Mouse

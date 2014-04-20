@@ -1,5 +1,10 @@
 module Touch.Cardinal where
 
+{-| Conversion to and from Cardinal.Direction values.
+Cardinal Directions represent the eight standard directions one might
+find on a compass or map.
+-}
+
 import Touch.Types (..)
 import Touch.Util as Util
 
@@ -11,6 +16,12 @@ data Direction = None | Up | UpRight | Right | DownRight | Down | DownLeft | Lef
 fromSwipe : Swipe -> [Direction]
 fromSwipe (Swipe _ vectors) = map (fromAngle . Util.vectorAngle) vectors
 
+{-| Conversion from a radian angle to a Cardinal Direction.
+
+    angleBetweenPoints : Signal Cardinal.Direction
+    angleBetweenPoints = let toTup {x,y} = (x,y)
+    (fromAngle . Util.angle) <~ 
+-}
 fromAngle : Float -> Direction
 fromAngle a = let bw a b1 b2 = a >= b1 && b2 > a
               in if | bw a (-pi/8) (pi/8)              -> right
