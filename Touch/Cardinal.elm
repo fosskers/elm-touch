@@ -3,6 +3,12 @@ module Touch.Cardinal where
 {-| Conversion to and from Cardinal.Direction values.
 Cardinal Directions represent the eight standard directions one might
 find on a compass or map.
+
+# Conversion
+@docs fromSwipe, fromAngle, fromArrows
+
+# Directions
+@docs nowhere, up, upRight, right, downRight, down, downLeft, left, upLeft
 -}
 
 import Touch.Types (..)
@@ -10,9 +16,15 @@ import Touch.Util as Util
 
 ---
 
-data Direction = None | Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
+data Direction = Nowhere | Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
 
--- | Converts a Swipe's angles to Cardinal directions.
+{-| Conversion from a Swipe's vectors' angles to Cardinal directions.
+Useful for gestures/actions where only the direction - not the position - of
+the gesture matters.
+
+    allDown : Swipe -> Bool
+    allDown = and . map (\d -> d == down) . Cardinal.fromSwipe
+-}
 fromSwipe : Swipe -> [Direction]
 fromSwipe (Swipe _ vectors) = map (fromAngle . Util.vectorAngle) vectors
 
@@ -20,7 +32,7 @@ fromSwipe (Swipe _ vectors) = map (fromAngle . Util.vectorAngle) vectors
 
     angleBetweenPoints : Signal Cardinal.Direction
     angleBetweenPoints = let toTup {x,y} = (x,y)
-    (fromAngle . Util.angle) <~ 
+    (fromAngle . Util.angle) <~ UNFINISHED
 -}
 fromAngle : Float -> Direction
 fromAngle a = let bw a b1 b2 = a >= b1 && b2 > a
@@ -33,6 +45,12 @@ fromAngle a = let bw a b1 b2 = a >= b1 && b2 > a
                     | bw a (-7 * pi / 8) (-5 * pi / 8) -> downLeft
                     | otherwise                        -> left
 
+{-| Conversion from Keyboard.arrows values.
+Note that unlike when dealing with angles in `fromAngle`, where any
+angle on the unit circle will yield a Direction, here, an input of
+`{x=0, y=0}` is a valid key position, but there is no angle to speak of.
+In such a case the functions yields `Nowhere`, the "empty" direction.
+-}
 fromArrows : {x: Int, y: Int} -> Direction
 fromArrows {x,y} = if | x == 1  && y == 0  -> right
                       | x == 1  && y == 1  -> upRight
@@ -42,10 +60,10 @@ fromArrows {x,y} = if | x == 1  && y == 0  -> right
                       | x == 0  && y == -1 -> down
                       | x == -1 && y == -1 -> downLeft
                       | x == -1 && y == 0  -> left
-                      | otherwise          -> none
+                      | otherwise          -> nowhere
 
-none : Direction
-none = None
+nowhere : Direction
+nowhere = None
 
 up : Direction
 up = Up
