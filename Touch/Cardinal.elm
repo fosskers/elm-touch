@@ -63,7 +63,7 @@ fromArrows {x,y} = if | x == 1  && y == 0  -> right
                       | otherwise          -> nowhere
 
 nowhere : Direction
-nowhere = None
+nowhere = Nowhere
 
 up : Direction
 up = Up
