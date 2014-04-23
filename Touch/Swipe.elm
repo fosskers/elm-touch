@@ -1,5 +1,18 @@
 module Touch.Swipe where
 
+{-| Conversion to and construction of Swipe values.
+Swipe values should never be made via their Type constructor found
+in `Touch.Types`, as internal implementation may change.
+Instead, they should be made through the functions found below.
+
+# Swipe Construction
+@docs oneFinger, twoFinger, threeFinger
+
+# Conversion
+@docs fromTouches
+
+-}
+
 import Touch (Touch)
 import Touch.Types (..)
 import Touch.Util as Util

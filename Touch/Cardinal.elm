@@ -1,6 +1,6 @@
 module Touch.Cardinal where
 
-{-| Conversion to and from Cardinal.Direction values.
+{-| Conversion to Cardinal.Direction values.
 Cardinal Directions represent the eight standard directions one might
 find on a compass or map.
 

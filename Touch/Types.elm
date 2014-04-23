@@ -1,12 +1,20 @@
 module Touch.Types where
 
--- | Represents starting and ending positions of some Swipe.
+{-| Data types for values used in `Touch.*` libraries.
+-}
+
+{-| Represents starting and ending positions of some Swipe.
+-}
 type Vector = ((Int,Int),(Int,Int))
 
--- | angles : [Float]
--- Holds the starting and ending positions for each swipe made in one action.
+{-| A basic swiping action made on a screen.
+Knows how many fingers were involved, and stores a Vector for each finger.
+-}
 data Swipe = Swipe Fingers [Vector]
 
+{-| A more concrete data type than what is provided by `Touch.taps`.
+Also knows how many fingers were involved in a multifinger tap.
+-}
 data Tap = Tap Fingers [(Int,Int)]
 
 data Fingers = OneFinger | TwoFinger | ThreeFinger
