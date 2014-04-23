@@ -3,7 +3,7 @@ module Touch.Util.Signal where
 {-| Derived Signals for use in `Touch.*` libraries.
 
 # Derived Signals
-@docs catchTwo
+@docs catchPair, catchN
 
 -}
 
@@ -11,12 +11,16 @@ module Touch.Util.Signal where
 Signals, the user must initially provide a default
 value for when two actions haven't happened yet.
 -}
-catchTwo : (a,a) -> Signal a -> Signal (a,a)
-catchTwo dflt s =
+catchPair : (a,a) -> Signal a -> Signal (a,a)
+catchPair dflt s =
     let toPair pair = case pair of
                         [x,y] -> (x,y)
                         _     -> dflt
-        f x acc = case acc of
-                    [y] -> [y,x]
-                    _   -> [x]
-    in toPair <~ (keepIf (\pair -> length pair == 2) [] <| foldp f [] s)
+    in toPair <~ catchN 2 s
+
+{-| The general case.
+Propagates only when the given Signal has occured `n` times.
+-}
+catchN : Int -> Signal a -> Signal [a]
+catchN n s = let f x acc = if length acc < n then x :: acc else [x]
+             in keepIf (\xs -> length xs == n) [] <| foldp f [] s
