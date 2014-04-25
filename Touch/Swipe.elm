@@ -1,6 +1,6 @@
 module Touch.Swipe where
 
-{-| Conversion to and construction of Swipe values.
+{-| Conversion to, and construction of, Swipe values.
 Swipe values should never be made via their Type constructor found
 in `Touch.Types`, as internal implementation may change.
 Instead, they should be made through the functions found below.
@@ -10,7 +10,6 @@ Instead, they should be made through the functions found below.
 
 # Conversion
 @docs fromTouches
-
 -}
 
 import Touch (Touch)
