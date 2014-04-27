@@ -28,8 +28,10 @@ threeFinger : [Vector] -> Swipe
 threeFinger = Swipe ThreeFinger
 
 fromTouches : [Touch] -> Swipe
-fromTouches ts = let a t = ((t.x0,t.y0),(t.x,t.y))
+fromTouches ts = let a t  = ((t.x0,t.y0),(t.x,t.y))
+                     dflt = [{x=0, y=0, id=0, x0=0, y0=0, t0=0}]
                  in case length ts of
+                      0 -> oneFinger   <| map a dflt
                       1 -> oneFinger   <| map a ts
                       2 -> twoFinger   <| map a ts
                       _ -> threeFinger <| take 3 <| map a ts

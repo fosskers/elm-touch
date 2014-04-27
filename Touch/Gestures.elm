@@ -16,6 +16,7 @@ import Touch.Tap as Tap
 import Touch.Util as Util
 import Touch.Swipe as Swipe
 import Touch.Cardinal as Cardinal
+import Signal.Derived as Derived
 
 ---
 
@@ -23,17 +24,15 @@ import Touch.Cardinal as Cardinal
 Can be performed with up to three fingers.
 -}
 slide : Signal Swipe
-slide = let dflt  = [{x=0, y=0, id=0, x0=0, y0=0, t0=0}]
-            ok ts = not (isEmpty ts) && not (Util.isTap <| head ts)
-        in Swipe.fromTouches <~ keepIf ok dflt Touch.touches
+slide = let ok ts = not (isEmpty ts) && not (Util.isTap <| head ts)
+        in Swipe.fromTouches <~ keepIf ok [] Touch.touches
 
 {-| A single Swipe action. Activates when the user has finished their swipe
 and released their finger from the screen.
 -}
 swipe : Signal Swipe
-swipe = let dflt   = Swipe.oneFinger [((0,0),(1,1))]
---            action = foldp (\s _ -> s) dflt <| keepWhen Mouse.isDown dflt slide
-        in keepWhen (not <~ Mouse.isDown) dflt slide
+swipe = let pred = not <~ Mouse.isDown
+        in Swipe.fromTouches <~ Derived.onceWhen [] pred Touch.touches
 
 {-| Yields a Cardinal Direction based off the angle of a Swipe.
 Defaults to the first Swipe given by `swipe` regardless of fingers used.

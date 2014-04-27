@@ -6,7 +6,7 @@ module Signal.Derived where
 @docs collect, collectN, dumpAfter
 
 # Delayed propagation
-@docs catchPair, catchN
+@docs catchPair, catchN, onceWhen
 -}
 
 {-| Collects Signal values over time.
