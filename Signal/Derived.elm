@@ -1,4 +1,4 @@
-module Touch.Util.Signal where
+module Signal.Derived where
 
 {-| Derived Signals for use in `Touch.*` libraries.
 
