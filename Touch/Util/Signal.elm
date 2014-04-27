@@ -45,3 +45,14 @@ New values are added to the head of the list.
 -}
 catchN : Int -> Signal a -> Signal [a]
 catchN n s = keepIf (\xs -> length xs == n) [] <| dumpAfter n s
+
+{-| TODO!!
+Only when the first Signal becomes false does the most recent value of the
+second value get propagated.
+switch : Signal Bool -> Signal a -> Signal a
+
+Use foldp that stores in a tuple the values of the second signal, as well as
+the current state of the first signal, as well as what the state just was.
+When the state transition is (False,True) we know there has been a change,
+so we should propagate the second Signal (but only once).
+-}
