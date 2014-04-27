@@ -26,7 +26,7 @@ collectN n = foldp (\x acc -> take n <| x :: acc) []
 dumpAfter : Int -> Signal a -> Signal [a]
 dumpAfter n = foldp (\x acc -> if length acc < n then x :: acc else [x]) []
 
-{-| Propagates when a Signal has occured twice. As Elm doesn't allow undefined
+{-| Propagates when a Signal has occurred twice. As Elm doesn't allow undefined
 Signals, the user must initially provide a default
 value for when two actions haven't happened yet.
 
@@ -40,19 +40,21 @@ catchPair dflt s =
     in toPair <~ catchN 2 s
 
 {-| The general case.
-Propagates only when the given Signal has occured `n` times.
+Propagates only when the given Signal has occurred `n` times.
 New values are added to the head of the list.
 -}
 catchN : Int -> Signal a -> Signal [a]
 catchN n s = keepIf (\xs -> length xs == n) [] <| dumpAfter n s
 
-{-| TODO!!
-Only when the first Signal becomes false does the most recent value of the
-second value get propagated.
-switch : Signal Bool -> Signal a -> Signal a
-
-Use foldp that stores in a tuple the values of the second signal, as well as
-the current state of the first signal, as well as what the state just was.
-When the state transition is (False,True) we know there has been a change,
-so we should propagate the second Signal (but only once).
+{-| Propagates the second Signal once when the first Signal transitions from
+False to True. As Elm doesn't allow undefined
+Signals, the user must initially provide a default
+value for when the switch hasn't occurred yet.
 -}
+onceWhen : a -> Signal Bool -> Signal a -> Signal a
+onceWhen dflt pred s =
+    let sig = (,) <~ pred ~ s
+        f (curr,a) ((last,_),_) = ((curr,last), Just a)
+        switched ((b1,b2),_) = b1 && not b2
+        zero = ((True,True),Nothing)
+    in (maybe dflt id . snd) <~ keepIf switched zero (foldp f zero sig)
