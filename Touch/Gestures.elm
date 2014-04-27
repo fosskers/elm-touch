@@ -16,7 +16,7 @@ import Touch.Tap as Tap
 import Touch.Util as Util
 import Touch.Swipe as Swipe
 import Touch.Cardinal as Cardinal
-import Signal.Derived as Derived
+import Touch.Signal.Derived as Derived
 
 ---
 
