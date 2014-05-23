@@ -12,7 +12,7 @@ find on a compass or map.
 -}
 
 import Touch.Types (..)
-import Touch.Util as Util
+import Touch.Util (..)
 
 ---
 
@@ -26,8 +26,11 @@ the gesture matters.
     allDown = and . map (\d -> d == down) . Cardinal.fromSwipe
 -}
 fromSwipe : Swipe -> [Direction]
-fromSwipe (Swipe _ vectors) = map (fromAngle . Util.vectorAngle) vectors
+fromSwipe (Swipe _ lineSegs) = map (fromAngle . lineSegAngle) lineSegs
 
+vector2ToCardinal : Vector2 -> Direction
+vector2ToCardinal (x,y) = fromAngle <| atan2 x y
+    
 {-| Conversion from a radian angle to a Cardinal Direction.
 
     angleBetweenPoints : Signal Cardinal.Direction
@@ -44,6 +47,7 @@ fromAngle a = let bw a b1 b2 = a >= b1 && b2 > a
                     | bw a (-5 * pi / 8) (-3 * pi / 8) -> down
                     | bw a (-7 * pi / 8) (-5 * pi / 8) -> downLeft
                     | otherwise                        -> left
+
 
 {-| Conversion from Keyboard.arrows values.
 Note that unlike when dealing with angles in `fromAngle`, where any

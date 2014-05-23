@@ -18,13 +18,13 @@ import Touch.Util as Util
 
 ---
 
-oneFinger : [Vector] -> Swipe
+oneFinger : [LineSeg] -> Swipe
 oneFinger = Swipe OneFinger
 
-twoFinger : [Vector] -> Swipe
+twoFinger : [LineSeg] -> Swipe
 twoFinger = Swipe TwoFinger
 
-threeFinger : [Vector] -> Swipe
+threeFinger : [LineSeg] -> Swipe
 threeFinger = Swipe ThreeFinger
 
 fromTouches : [Touch] -> Swipe
