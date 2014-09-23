@@ -66,7 +66,7 @@ touchDragState = foldp processTouchDragging (NotDragging, []) Touch.touches
 Defaults to the first Swipe given by `swipe` regardless of fingers used.
 -}
 ray : Signal Cardinal.Direction
-ray = (head . f) <~ touchDragState
+ray = (head << f) <~ touchDragState
 
 f : (TouchDragState, [Touch.Touch]) -> [Cardinal.Direction]
 f (tds, _) = 
@@ -86,7 +86,7 @@ tap = (\{x,y} -> Tap.oneFinger [(x,y)]) <~ Touch.taps
 {-| Yields a Cardinal Direction relative to a given fixed location.
 -}
 relative : (Int,Int) -> Signal Cardinal.Direction
-relative fixed = relativeImp fixed . (\{x,y} -> (x,y)) <~ Touch.taps
+relative fixed = relativeImp fixed << (\{x,y} -> (x,y)) <~ Touch.taps
 
 relativeImp : (Int,Int) -> (Int,Int) -> Cardinal.Direction
 relativeImp (xf, yf) (x,y) = Cardinal.vector2ToCardinal <| Util.lineSegToVector2 ((xf,yf), (x,y))

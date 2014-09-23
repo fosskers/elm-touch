@@ -26,7 +26,7 @@ the gesture matters.
     allDown = and . map (\d -> d == down) . Cardinal.fromSwipe
 -}
 fromSwipe : Swipe -> [Direction]
-fromSwipe (Swipe _ lineSegs) = map (fromAngle . lineSegAngle) lineSegs
+fromSwipe (Swipe _ lineSegs) = map (fromAngle << lineSegAngle) lineSegs
 
 vector2ToCardinal : Vector2 -> Direction
 vector2ToCardinal (x,y) = fromAngle <| atan2 x y

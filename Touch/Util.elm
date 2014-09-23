@@ -38,7 +38,7 @@ lineSegAngle = uncurry angle
 distance : (Int,Int) -> (Int,Int) -> Int
 distance (x1,y1) (x2,y2) = let a = x2 - x1
                                b = y2 - y1
-                           in sqrt <| (a ^ 2) + (b ^ 2)
+                           in round <| sqrt <| toFloat <| (a ^ 2) + (b ^ 2)
 
 {-| Converts a line segment to a Vector2 
 -}

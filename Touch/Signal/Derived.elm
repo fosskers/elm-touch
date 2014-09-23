@@ -1,5 +1,7 @@
 module Touch.Signal.Derived where
 
+import Maybe
+
 {-| Derived Signals for use in `Touch.*` libraries.
 
 # Value collection
@@ -57,4 +59,4 @@ onceWhen dflt pred s =
         f (curr,a) ((last,_),_) = ((curr,last), Just a)
         switched ((b1,b2),_) = b1 && not b2
         zero = ((True,True),Nothing)
-    in (maybe dflt id . snd) <~ keepIf switched zero (foldp f zero sig)
+    in ((Maybe.maybe dflt identity) << snd) <~ keepIf switched zero (foldp f zero sig)
