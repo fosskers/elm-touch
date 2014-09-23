@@ -37,7 +37,7 @@ swipe = Swipe.fromTouches <~ keepWhen swipePred [] Touch.touches
 
 data TouchDragState = Dragging | TouchJustStarted | TouchJustFinished | DragJustFinished Swipe | NotDragging
 
-processTouchDragging :  [Touch.Touch] -> (TouchDragState, [Touch.Touch]) -> (TouchDragState, [Touch.Touch])
+processTouchDragging :  [Touch.Touch] -> DragStateWithTouches -> DragStateWithTouches
 processTouchDragging ts (prevState, prevTouches) = 
   let
     touching = length ts > 0
@@ -56,8 +56,10 @@ processTouchDragging ts (prevState, prevTouches) =
         TouchJustStarted -> (TouchJustFinished, [])
         Dragging -> (DragJustFinished (Swipe.fromTouches prevTouches), [])
         DragJustFinished _ -> (NotDragging, [])
+
+type DragStateWithTouches = (TouchDragState, [Touch.Touch])
        
-touchDragState : Signal (TouchDragState, [Touch.Touch])
+touchDragState : Signal DragStateWithTouches
 touchDragState = foldp processTouchDragging (NotDragging, []) Touch.touches
 
 {-| Yields a Cardinal Direction based off the angle of a Swipe.
