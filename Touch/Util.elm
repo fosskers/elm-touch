@@ -11,7 +11,7 @@ Maybe the name `Touch.Trig` would be better?
 -}
 
 import Touch
-import Touch.Types (LineSeg, Vector2)
+import Touch.Types exposing (LineSeg, Vector2)
 
 ---
 

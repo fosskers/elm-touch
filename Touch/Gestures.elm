@@ -1,5 +1,9 @@
 module Touch.Gestures where
 
+
+import List exposing (..)
+import Signal exposing (..)
+
 {-| A library for touch gestures one can make on a mobile device.
 
 # Swipes
@@ -10,12 +14,13 @@ module Touch.Gestures where
 -}
 
 import Touch
-import Touch.Types (..)
+import Touch.Types exposing (..)
 import Touch.Tap as Tap
 import Touch.Util as Util
 import Touch.Swipe as Swipe
 import Touch.Cardinal as Cardinal
 import Touch.Signal.Derived as Derived
+import Maybe exposing (withDefault)
 
 ---
 
@@ -23,21 +28,18 @@ import Touch.Signal.Derived as Derived
 Can be performed with up to three fingers.
 -}
 slide : Signal Swipe
-slide = let ok ts = not (isEmpty ts) && not (Util.isTap <| head ts)
-        in Swipe.fromTouches <~ keepIf ok [] Touch.touches
-
-swipePred : Signal Bool
-swipePred = (\ts -> length ts == 0) <~ Touch.touches
+slide = let ok ts = withDefault False (head (List.map (not << Util.isTap) ts))
+        in Swipe.fromTouches <~ Signal.filter ok [] Touch.touches
 
 {-| A single Swipe action. Activates when the user has finished their swipe
 and released their finger from the screen.
 -}
 swipe : Signal Swipe
-swipe = Swipe.fromTouches <~ keepWhen swipePred [] Touch.touches
+swipe = Swipe.fromTouches <~ Signal.filter  (\ts -> length ts == 0) [] Touch.touches
 
-data TouchDragState = Dragging | TouchJustStarted | TouchJustFinished | DragJustFinished Swipe | NotDragging
+type TouchDragState = Dragging | TouchJustStarted | TouchJustFinished | DragJustFinished Swipe | NotDragging
 
-processTouchDragging :  [Touch.Touch] -> DragStateWithTouches -> DragStateWithTouches
+processTouchDragging :  List Touch.Touch -> DragStateWithTouches -> DragStateWithTouches
 processTouchDragging ts (prevState, prevTouches) = 
   let
     touching = length ts > 0
@@ -57,7 +59,7 @@ processTouchDragging ts (prevState, prevTouches) =
         Dragging -> (DragJustFinished (Swipe.fromTouches prevTouches), [])
         DragJustFinished _ -> (NotDragging, [])
 
-type DragStateWithTouches = (TouchDragState, [Touch.Touch])
+type alias DragStateWithTouches = (TouchDragState, List Touch.Touch)
        
 touchDragState : Signal DragStateWithTouches
 touchDragState = foldp processTouchDragging (NotDragging, []) Touch.touches
@@ -66,9 +68,9 @@ touchDragState = foldp processTouchDragging (NotDragging, []) Touch.touches
 Defaults to the first Swipe given by `swipe` regardless of fingers used.
 -}
 ray : Signal Cardinal.Direction
-ray = (head << f) <~ touchDragState
+ray = (withDefault Cardinal.Nowhere) << head << f <~ touchDragState
 
-f : (TouchDragState, [Touch.Touch]) -> [Cardinal.Direction]
+f : DragStateWithTouches -> List Cardinal.Direction
 f (tds, _) = 
   case tds of
     DragJustFinished sw -> Cardinal.fromSwipe sw
@@ -101,4 +103,4 @@ relativeWithin : Int -> (Int,Int) -> Signal Cardinal.Direction
 relativeWithin dis ((xf, yf) as fixed) =
     let ok {x,y}    = Util.distance fixed (x,y) <= dis
         cardinal {x,y} = relativeImp fixed (x,y)
-    in cardinal <~ keepIf ok {x=0,y=0} Touch.taps
+    in cardinal <~ Signal.filter ok {x=0,y=0} Touch.taps

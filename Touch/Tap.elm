@@ -1,5 +1,7 @@
 module Touch.Tap where
 
+import List exposing (..)
+
 {-| Conversion to, and construction of, Tap values.
 Tap values should never be made via their Type constructor found
 in `Touch.Types`, as internal implementation may change.
@@ -12,17 +14,17 @@ Instead, they should be made through the functions found below.
 @docs fromPrimTap
 -}
 
-import Touch.Types (..)
+import Touch.Types exposing (..)
 
 ---
 
-oneFinger : [(Int,Int)] -> Tap
+oneFinger : List (Int,Int) -> Tap
 oneFinger = Tap OneFinger
 
-twoFinger : [(Int,Int)] -> Tap
+twoFinger : List (Int,Int) -> Tap
 twoFinger = Tap TwoFinger
 
-threeFinger : [(Int,Int)] -> Tap
+threeFinger : List (Int,Int) -> Tap
 threeFinger = Tap ThreeFinger
 
 {-| Conversion from a primative `Touch.taps` value.

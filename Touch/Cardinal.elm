@@ -1,5 +1,7 @@
 module Touch.Cardinal where
 
+import List exposing (..)
+
 {-| Conversion to Cardinal.Direction values.
 Cardinal Directions represent the eight standard directions one might
 find on a compass or map.
@@ -11,12 +13,12 @@ find on a compass or map.
 @docs nowhere, up, upRight, right, downRight, down, downLeft, left, upLeft
 -}
 
-import Touch.Types (..)
-import Touch.Util (..)
+import Touch.Types exposing (..)
+import Touch.Util exposing (..)
 
 ---
 
-data Direction = Nowhere | Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
+type Direction = Nowhere | Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
 
 {-| Conversion from a Swipe's vectors' angles to Cardinal directions.
 Useful for gestures/actions where only the direction - not the position - of
@@ -25,7 +27,7 @@ the gesture matters.
     allDown : Swipe -> Bool
     allDown = and . map (\d -> d == down) . Cardinal.fromSwipe
 -}
-fromSwipe : Swipe -> [Direction]
+fromSwipe : Swipe -> List Direction
 fromSwipe (Swipe _ lineSegs) = map (fromAngle << lineSegAngle) lineSegs
 
 vector2ToCardinal : Vector2 -> Direction
