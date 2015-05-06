@@ -20,6 +20,9 @@ import Touch.Util exposing (..)
 
 type Direction = Nowhere | Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
 
+-- The aim is to avoid touches that are not swipes spuriously being registered as swipes due to touch sensor noise.
+swipeLengthThreshold = 50
+
 {-| Conversion from a Swipe's vectors' angles to Cardinal directions.
 Useful for gestures/actions where only the direction - not the position - of
 the gesture matters.
@@ -28,8 +31,8 @@ the gesture matters.
     allDown = and . map (\d -> d == down) . Cardinal.fromSwipe
 -}
 fromSwipe : Swipe -> List Direction
-fromSwipe (Swipe _ lineSegs) = map (fromAngle << lineSegAngle) lineSegs
-
+fromSwipe (Swipe _ lineSegs) = map (fromAngle << lineSegAngle) (filter (\x -> (uncurry distance) x > swipeLengthThreshold) lineSegs)
+ 
 vector2ToCardinal : Vector2 -> Direction
 vector2ToCardinal (x,y) = fromAngle <| atan2 x y
     
