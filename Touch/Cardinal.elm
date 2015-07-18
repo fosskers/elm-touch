@@ -1,5 +1,7 @@
 module Touch.Cardinal where
 
+import List exposing (..)
+
 {-| Conversion to Cardinal.Direction values.
 Cardinal Directions represent the eight standard directions one might
 find on a compass or map.
@@ -11,12 +13,15 @@ find on a compass or map.
 @docs nowhere, up, upRight, right, downRight, down, downLeft, left, upLeft
 -}
 
-import Touch.Types (..)
-import Touch.Util as Util
+import Touch.Types exposing (..)
+import Touch.Util exposing (..)
 
 ---
 
-data Direction = Nowhere | Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
+type Direction = Nowhere | Up | UpRight | Right | DownRight | Down | DownLeft | Left | UpLeft
+
+-- The aim is to avoid touches that are not swipes spuriously being registered as swipes due to touch sensor noise.
+swipeLengthThreshold = 50
 
 {-| Conversion from a Swipe's vectors' angles to Cardinal directions.
 Useful for gestures/actions where only the direction - not the position - of
@@ -25,9 +30,12 @@ the gesture matters.
     allDown : Swipe -> Bool
     allDown = and . map (\d -> d == down) . Cardinal.fromSwipe
 -}
-fromSwipe : Swipe -> [Direction]
-fromSwipe (Swipe _ vectors) = map (fromAngle . Util.vectorAngle) vectors
-
+fromSwipe : Swipe -> List Direction
+fromSwipe (Swipe _ lineSegs) = map (fromAngle << lineSegAngle) (filter (\x -> (uncurry distance) x > swipeLengthThreshold) lineSegs)
+ 
+vector2ToCardinal : Vector2 -> Direction
+vector2ToCardinal (x,y) = fromAngle <| atan2 x y
+    
 {-| Conversion from a radian angle to a Cardinal Direction.
 
     angleBetweenPoints : Signal Cardinal.Direction
@@ -44,6 +52,7 @@ fromAngle a = let bw a b1 b2 = a >= b1 && b2 > a
                     | bw a (-5 * pi / 8) (-3 * pi / 8) -> down
                     | bw a (-7 * pi / 8) (-5 * pi / 8) -> downLeft
                     | otherwise                        -> left
+
 
 {-| Conversion from Keyboard.arrows values.
 Note that unlike when dealing with angles in `fromAngle`, where any

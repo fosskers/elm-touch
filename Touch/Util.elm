@@ -11,7 +11,7 @@ Maybe the name `Touch.Trig` would be better?
 -}
 
 import Touch
-import Touch.Types (Vector)
+import Touch.Types exposing (LineSeg, Vector2)
 
 ---
 
@@ -28,17 +28,27 @@ pi to -pi.
 angle : (Int,Int) -> (Int,Int) -> Float
 angle (x1,y1) (x2,y2) = atan2 (toFloat (y1 - y2)) (toFloat (x2 - x1))
 
-{-| The angle of a Vector.
+{-| The angle of a LineSeg.
 -}
-vectorAngle : Vector -> Float
-vectorAngle = uncurry angle
+lineSegAngle : LineSeg -> Float
+lineSegAngle = uncurry angle
 
 {-| Calculates the whole-number distance between two points.
 -}
 distance : (Int,Int) -> (Int,Int) -> Int
 distance (x1,y1) (x2,y2) = let a = x2 - x1
                                b = y2 - y1
-                           in sqrt <| (a ^ 2) + (b ^ 2)
+                           in round <| sqrt <| toFloat <| (a ^ 2) + (b ^ 2)
+
+{-| Converts a line segment to a Vector2 
+-}
+lineSegToVector2 : LineSeg -> Vector2
+lineSegToVector2 ((x1,y1),(x2,y2)) = (toFloat (y1 - y2), toFloat (x2 - x1))
+
+{-| Dot product between 2 Vector2's
+-}
+dot : Vector2 -> Vector2 -> Float
+dot (x1,y1) (x2,y2) = x1 * x2 + y1 + y2
 
 {-| Determines if a given Touch started and ended on the same pixel.
 -}
